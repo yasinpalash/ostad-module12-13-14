@@ -77,7 +77,7 @@ class _SingUpScreenState extends State<SingUpScreen> {
                     ),
                     TextFormField(
                       controller: _lastNameTEController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Last name',
                       ),
                       validator: (String? value) {
@@ -93,7 +93,7 @@ class _SingUpScreenState extends State<SingUpScreen> {
                     TextFormField(
                       controller: _mobileTEController,
                       keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Mobile',
                       ),
                       validator: (String? value) {
@@ -109,7 +109,7 @@ class _SingUpScreenState extends State<SingUpScreen> {
                     TextFormField(
                       controller: _passwordTEController,
                       obscureText: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Password',
                       ),
                       validator: (String? value) {
