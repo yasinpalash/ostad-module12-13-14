@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:http/http.dart';
 
@@ -13,22 +14,19 @@ class NetworkCaller {
         "content-type": "Application/json",
       });
       if (response.statusCode == 200) {
-        return NetworkResponse(isSuccess: true,jsonResponse: jsonDecode(response.body),
-        statusCode: 200,
-
+        return NetworkResponse(
+          isSuccess: true,
+          jsonResponse: jsonDecode(response.body),
+          statusCode: 200,
         );
       } else {
-        return NetworkResponse(isSuccess: false,
-          statusCode: response.statusCode,
-          jsonResponse: jsonDecode(response.body)
-
-        );
-
+        return NetworkResponse(
+            isSuccess: false,
+            statusCode: response.statusCode,
+            jsonResponse: jsonDecode(response.body));
       }
     } catch (e) {
-      return NetworkResponse(isSuccess: false,errorMassage: e.toString());
-
+      return NetworkResponse(isSuccess: false, errorMassage: e.toString());
     }
   }
 }
-

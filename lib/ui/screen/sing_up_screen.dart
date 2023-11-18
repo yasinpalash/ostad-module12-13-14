@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:module12/data.network_caller/network_caller.dart';
 import 'package:module12/ui/widget/body_background.dart';
+
+import '../../data.network_caller/Utility/urls.dart';
+import '../../data.network_caller/network_response.dart';
+import '../widget/snack_bar.dart';
 
 class SingUpScreen extends StatefulWidget {
   const SingUpScreen({super.key});
@@ -9,13 +14,13 @@ class SingUpScreen extends StatefulWidget {
 }
 
 class _SingUpScreenState extends State<SingUpScreen> {
-
-  final TextEditingController _emailTEController= TextEditingController();
-  final TextEditingController _firstNameTEController= TextEditingController();
-  final TextEditingController _lastNameTEController= TextEditingController();
-  final TextEditingController _mobileTEController= TextEditingController();
-  final TextEditingController _passwordTEController= TextEditingController();
-  final GlobalKey<FormState> _formKey=GlobalKey<FormState>();
+  final TextEditingController _emailTEController = TextEditingController();
+  final TextEditingController _firstNameTEController = TextEditingController();
+  final TextEditingController _lastNameTEController = TextEditingController();
+  final TextEditingController _mobileTEController = TextEditingController();
+  final TextEditingController _passwordTEController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _singUpInProgress = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,13 +50,11 @@ class _SingUpScreenState extends State<SingUpScreen> {
                       decoration: const InputDecoration(
                         hintText: 'Email',
                       ),
-                      validator: (String?value){
-                        if(value?.trim().isEmpty??true){
+                      validator: (String? value) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Enter your Email';
-
                         }
                         return null;
-
                       },
                     ),
                     const SizedBox(
@@ -62,13 +65,11 @@ class _SingUpScreenState extends State<SingUpScreen> {
                       decoration: InputDecoration(
                         hintText: 'First name',
                       ),
-                      validator: (String?value){
-                        if(value?.trim().isEmpty??true){
+                      validator: (String? value) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Enter your First name';
-
                         }
                         return null;
-
                       },
                     ),
                     const SizedBox(
@@ -79,13 +80,11 @@ class _SingUpScreenState extends State<SingUpScreen> {
                       decoration: InputDecoration(
                         hintText: 'Last name',
                       ),
-                      validator: (String?value){
-                        if(value?.trim().isEmpty??true){
+                      validator: (String? value) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Enter your Last Name';
-
                         }
                         return null;
-
                       },
                     ),
                     const SizedBox(
@@ -97,13 +96,11 @@ class _SingUpScreenState extends State<SingUpScreen> {
                       decoration: InputDecoration(
                         hintText: 'Mobile',
                       ),
-                      validator: (String?value){
-                        if(value?.trim().isEmpty??true){
+                      validator: (String? value) {
+                        if (value?.trim().isEmpty ?? true) {
                           return 'Enter your Mobile Number';
-
                         }
                         return null;
-
                       },
                     ),
                     const SizedBox(
@@ -115,16 +112,14 @@ class _SingUpScreenState extends State<SingUpScreen> {
                       decoration: InputDecoration(
                         hintText: 'Password',
                       ),
-                      validator: (String?value){
-                        if(value?.isEmpty??true){
+                      validator: (String? value) {
+                        if (value?.isEmpty ?? true) {
                           return 'Enter your password';
-
                         }
-                        if(value!.length<6){
+                        if (value!.length < 6) {
                           return 'Enter password more than 6 latter';
                         }
                         return null;
-
                       },
                     ),
                     const SizedBox(
@@ -132,14 +127,15 @@ class _SingUpScreenState extends State<SingUpScreen> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if(_formKey.currentState!.validate()){
-
-                          }
-
-                        },
-                        child: Icon(Icons.arrow_circle_right_outlined),
+                      child: Visibility(
+                        visible: _singUpInProgress==false,
+                        replacement: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _signUp,
+                          child: const Icon(Icons.arrow_circle_right_outlined),
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -156,13 +152,14 @@ class _SingUpScreenState extends State<SingUpScreen> {
                               color: Colors.black54),
                         ),
                         TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text(
-                              'Sing In',
-                              style: TextStyle(fontSize: 16),
-                            ))
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Sing In',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        )
                       ],
                     )
                   ],
@@ -174,6 +171,50 @@ class _SingUpScreenState extends State<SingUpScreen> {
       ),
     );
   }
+Future<void> _signUp() async {
+  if (_formKey.currentState!.validate()) {
+    _singUpInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    final NetworkResponse response =
+    await NetworkCaller()
+        .postRequest(Urls.registration, body: {
+      "email": _emailTEController.text,
+      "firstName": _firstNameTEController.text,
+      "lastName": _lastNameTEController.text,
+      "mobile": _mobileTEController.text,
+      "password": _passwordTEController.text,
+    });
+    _singUpInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    if (response.isSuccess) {
+      if (mounted) {
+        _clearTextFields();
+        showSnackMessage(context,
+            'Account has been create! Please Login');
+      }
+    } else {
+      if (mounted) {
+        showSnackMessage(
+            context,
+            'Account  creation failed! Please Try again',
+            true);
+      }
+    }
+  }
+}
+  void _clearTextFields(){
+    _emailTEController.clear();
+    _firstNameTEController.clear();
+    _lastNameTEController.clear();
+    _mobileTEController.clear();
+    _passwordTEController.clear();
+  }
+
+
   @override
   void dispose() {
     _emailTEController.dispose();
