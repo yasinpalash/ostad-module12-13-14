@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:module12/data.network_caller/models/user_model.dart';
 import 'package:module12/data.network_caller/network_caller.dart';
 import 'package:module12/data.network_caller/network_response.dart';
+import 'package:module12/ui/controllers/auth_controller.dart';
 import 'package:module12/ui/screen/main_bottom_nav_screen.dart';
 import 'package:module12/ui/screen/sing_up_screen.dart';
 import 'package:module12/ui/widget/body_background.dart';
 import 'package:module12/ui/widget/snack_bar.dart';
-
 import '../../data.network_caller/Utility/urls.dart';
 import 'forgot_password_screen.dart';
 
@@ -80,8 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: Visibility(
-                      visible: _loginInProgress==false,
-                      replacement: const Center(child: CircularProgressIndicator()),
+                      visible: _loginInProgress == false,
+                      replacement:
+                          const Center(child: CircularProgressIndicator()),
                       child: ElevatedButton(
                         onPressed: _logIn,
                         child: const Icon(Icons.arrow_circle_right_outlined),
@@ -155,6 +157,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (response.isSuccess) {
+        await AuthController.saveUserInformation(response.jsonResponse['token'],
+            UserModel.fromJson(response.jsonResponse['data']));
+
         if (mounted) {
           Navigator.push(
             context,
