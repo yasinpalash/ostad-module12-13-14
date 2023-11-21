@@ -7,21 +7,19 @@ import '../screen/edit_profile_screen.dart';
 class ProfileSummaryCard extends StatelessWidget {
   const ProfileSummaryCard({
     super.key,
-    this.enabelOnTap = true,
   });
-  final bool enabelOnTap;
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        if (enabelOnTap) {
+
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => EditProfileScreen(),
             ),
           );
-        }
+
       },
       leading: const CircleAvatar(
         child: Icon(Icons.person),

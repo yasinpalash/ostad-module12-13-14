@@ -17,7 +17,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           children: [
             ProfileSummaryCard(
-              enabelOnTap: false,
+
             ),
             Expanded(
                 child: BodyBackground(
