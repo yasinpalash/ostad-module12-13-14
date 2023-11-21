@@ -18,6 +18,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           children: [
             ProfileSummaryCard(
 
+
             ),
             Expanded(
                 child: BodyBackground(
