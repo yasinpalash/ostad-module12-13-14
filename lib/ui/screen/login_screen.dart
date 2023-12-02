@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await NetworkCaller().postRequest(Urls.login, body: {
         "email": _emailTEController.text.trim(),
         "password": _passwordTEController.text.trim(),
-      });
+      },isLogin: true);
       _loginInProgress = false;
       if (mounted) {
         setState(() {});
@@ -170,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       } else {
-        if (response.statusCode == 400) {
+        if (response.statusCode == 401) {
           if (mounted) {
             showSnackMessage(context, 'please check your email or password');
           } else {
