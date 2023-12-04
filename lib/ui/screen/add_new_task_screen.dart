@@ -6,9 +6,13 @@ import 'package:module12/ui/widget/profile_summary_card.dart';
 import 'package:module12/ui/widget/snack_bar.dart';
 
 import '../../data.network_caller/Utility/urls.dart';
+import 'new_tasks_screen.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
-  const AddNewTaskScreen({super.key});
+  const AddNewTaskScreen({super.key,
+    required this.onScreen, required this.onScreenForSummaryCard});
+  final VoidCallback onScreen;
+  final VoidCallback onScreenForSummaryCard;
 
   @override
   State<AddNewTaskScreen> createState() => _AddNewTaskScreenState();
@@ -121,6 +125,9 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
       if (response.isSuccess) {
         _subjectTEController.clear();
         _descriptionTEController.clear();
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewTasksScreen()));
+
+
         if (mounted) {
           showSnackMessage(context, 'New task added');
         }

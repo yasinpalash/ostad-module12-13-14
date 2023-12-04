@@ -17,10 +17,14 @@ class TasksItemCard extends StatefulWidget {
     required this.task,
     required this.onStatusChange,
     required this.showProgress,
+    this.onStatusSummaryCardChange,
+    this.showProgressForSummaryCard,
   });
   final Task task;
   final VoidCallback onStatusChange;
+  final VoidCallback? onStatusSummaryCardChange;
   final Function(bool) showProgress;
+  final Function(bool)? showProgressForSummaryCard;
 
   @override
   State<TasksItemCard> createState() => _TasksItemCardState();
@@ -29,12 +33,15 @@ class TasksItemCard extends StatefulWidget {
 class _TasksItemCardState extends State<TasksItemCard> {
   Future<void> updateTaskStatus(String status) async {
     widget.showProgress(true);
+    widget.showProgressForSummaryCard!(true);
     final response = await NetworkCaller()
         .getRequest(Urls.updateTaskStatus(widget.task.sId ?? '', status));
     if (response.isSuccess) {
       widget.onStatusChange();
+      widget.onStatusSummaryCardChange!();
     }
     widget.showProgress(false);
+    widget.showProgressForSummaryCard!(false);
   }
 
   @override

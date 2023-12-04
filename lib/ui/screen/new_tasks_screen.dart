@@ -14,6 +14,8 @@ import 'add_new_task_screen.dart';
 class NewTasksScreen extends StatefulWidget {
   const NewTasksScreen({super.key});
 
+
+
   @override
   State<NewTasksScreen> createState() => _NewTasksScreenState();
 }
@@ -73,7 +75,15 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const AddNewTaskScreen(),
+                builder: (context) =>  AddNewTaskScreen(
+                  onScreen: (){
+                    getNewTaskList();
+
+                  },
+                  onScreenForSummaryCard: (){
+                    getTaskCountSummaryList();
+                  },
+                ),
               ),
             );
           },
@@ -108,8 +118,7 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
             ),
             Expanded(
               child: RefreshIndicator(
-
-                onRefresh: getNewTaskList ,
+                onRefresh: getNewTaskList,
                 child: Visibility(
                   visible: getNewTaskInProgress == false,
                   replacement: const Center(child: CircularProgressIndicator()),
@@ -118,18 +127,21 @@ class _NewTasksScreenState extends State<NewTasksScreen> {
                     itemBuilder: (context, index) {
                       return TasksItemCard(
                         task: taskListModel.taskList![index],
-                        onStatusChange: (){
+                        onStatusChange: () {
                           getNewTaskList();
-
                         },
-                        showProgress: (inProgress){
-                          getNewTaskInProgress=inProgress;
-                          if(mounted){
-                            setState(() {
-
-                            });
+                        showProgress: (inProgress) {
+                          getNewTaskInProgress = inProgress;
+                          if (mounted) {
+                            setState(() {});
                           }
-
+                        },
+                        showProgressForSummaryCard: (inProgressForSummary) {
+                          getTaskCountSummaryInProgress = inProgressForSummary;
+                          if (mounted) {}
+                        },
+                        onStatusSummaryCardChange: () {
+                          getTaskCountSummaryList();
                         },
                       );
                     },
