@@ -1,28 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:module12/data.network_caller/network_caller.dart';
 
+import '../../data.network_caller/Utility/urls.dart';
 import '../../data.network_caller/models/task.dart';
 
- enum TaskStatus{
-   New,
-   Progress,
-   Completed,
-   calcelled,
- }
+enum TaskStatus {
+  New,
+  Progress,
+  Completed,
+  calcelled,
+}
+
 class TasksItemCard extends StatefulWidget {
   const TasksItemCard({
     super.key,
     required this.task,
+    required this.onStatusChange,
+    required this.showProgress,
   });
   final Task task;
+  final VoidCallback onStatusChange;
+  final Function(bool) showProgress;
 
   @override
   State<TasksItemCard> createState() => _TasksItemCardState();
 }
 
 class _TasksItemCardState extends State<TasksItemCard> {
-  Future<void> updateTaskStatus(String status)async{
-
+  Future<void> updateTaskStatus(String status) async {
+    widget.showProgress(true);
+    final response = await NetworkCaller()
+        .getRequest(Urls.updateTaskStatus(widget.task.sId ?? '', status));
+    if (response.isSuccess) {
+      widget.onStatusChange();
+    }
+    widget.showProgress(false);
   }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -70,31 +84,42 @@ class _TasksItemCardState extends State<TasksItemCard> {
     );
   }
 
-  void showUpdateStatusModel(){
-    List<ListTile> item=TaskStatus.values.map((e) => ListTile(title: Text(e.name),)).toList();
-     showDialog(context: context, builder: (context){
-       return AlertDialog(
-         title: const Text('Update Status'),
-         content: Column(
-           mainAxisSize: MainAxisSize.min,
-           children:item,
-
-         ),
-         actions: [
-           ButtonBar(
-             children: [
-               TextButton(onPressed: (){
-                 Navigator.pop(context);
-               }, child: const Text('Cancel',style: TextStyle(color: Colors.blueGrey),)),
-               TextButton(onPressed: (){}, child: Text('Update'))
-             ],
-           )
-         ],
-
-       );
-
-
-    }) ;
-
+  void showUpdateStatusModel() {
+    List<ListTile> item = TaskStatus.values
+        .map((e) => ListTile(
+              title: Text(e.name),
+              onTap: () {
+                updateTaskStatus(e.name);
+                Navigator.pop(context);
+              },
+            ))
+        .toList();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Update Status'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: item,
+          ),
+          actions: [
+            ButtonBar(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.blueGrey),
+                  ),
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
   }
 }
